@@ -32,7 +32,7 @@ library(here)
 
 raw <- read_csv(file("stdin") , col_names = F)
 
-scoring_guide <- raw %>% 
+big_5_scoring_guide <- raw %>% 
   select(-X13) %>%  # Unused extra column 
   rename(
     trait = X1,
@@ -56,4 +56,4 @@ scoring_guide <- raw %>%
   arrange(question_number)
 
 # Save to R/sysdata.rda
-usethis::use_data(scoring_guide, internal = T, overwrite = T)
+usethis::use_data(big_5_scoring_guide, internal = T, overwrite = T)
