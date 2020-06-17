@@ -54,7 +54,12 @@ big_5_scoring_guide <- raw %>%
     question_number = abs(question_number)
   ) %>%
   
-  arrange(question_number)
+  arrange(question_number) %>% 
+  
+  # Get question numbers by trait to match dataset numbering
+  group_by(trait) %>%
+  mutate(question_number = row_number()) %>%
+  ungroup()
 
 # Get ranges for the randomnumber dataset ======================================
 
