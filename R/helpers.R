@@ -1,29 +1,6 @@
 #===============================================================================
 # author: Victor Faner
-# description: Miscellaneous helper functions
 #===============================================================================
-
-get_rand_ranges <- function() {
-  url <- "https://openpsychometrics.org/_rawdata/randomnumber.zip"
-  td <- tempdir()
-  tf <- tempfile(tmpdir = td, fileext = ".zip")
-  download.file(url, tf, quiet = T)
-  fname <- paste(dataset, "codebook.txt", sep = "/")
-  unzip(tf, files = fname, exdir = td, overwrite = T)
-  f <- file.path(td, fname)
-  d <- data.table::fread(f, sep = "\t", header = F)
-  d <- dplyr::filter(d, stringr::str_detect(V1, "R"))
-  d <- data.frame(stringr::str_extract_all(d$V2, 
-                                           "[0-9]+", 
-                                           simplify = T))
-  d <- dplyr::mutate(d,
-                     question_number = dplyr::row_number(),
-                     lower = X1,
-                     upper = X2)
-  d <- dplyr::select(d, -X1, -X2)
-  
-  return(d)
-}
 
 calc_big_five <- function(raw) {
   # library(tidyverse)

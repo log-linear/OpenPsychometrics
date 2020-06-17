@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Script to download and parse out the Big Five Personality scoring guide.
-# Final output file is saved in R/sysdata.rda
+# Helper script for generating package data. First step is to download and
+# parse out the Big 5 Personality scoring guide into a tabular format. This
+# data is then piped into the data-raw/DATASET.R script
 
 # Download file
 wget https://openpsychometrics.org/printable/big-five-personality-test.pdf
@@ -15,7 +16,7 @@ pdftotext big-five-personality-test.pdf - \
   | sed -r "s/=//g" \
   | sed -r "s/ +/,/g" \
   | sed -r "s/([+-]),/\1/g" \
-  | Rscript big_5_scoring_guide.R
+  | Rscript DATASET.R
 
 # Remove downloaded PDF
 rm big-five-personality-test.pdf

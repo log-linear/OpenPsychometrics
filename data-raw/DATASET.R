@@ -1,8 +1,13 @@
 #===============================================================================
 # author:      Victor Faner
-# author:      2020-05-13
-# description: Script for parsing the Big 5 Scoring Guide into a useable format.
-#
+# author:      2020-06-17
+# description: Script for creating package data
+#===============================================================================
+library(tidyverse)
+library(here)
+
+# Create Big 5 scoring guide ===================================================
+
 # The initial parsed input data (as piped in by the shell script) is formatted 
 # as follows:
 #
@@ -26,12 +31,8 @@
 #
 # where each row represents a single question number, alongside its 
 # corresponding Big Five trait, base score, and scoring operation.
-#===============================================================================
-library(tidyverse)
-library(here)
 
 raw <- read_csv(file("stdin") , col_names = F)
-
 big_5_scoring_guide <- raw %>% 
   select(-X13) %>%  # Unused extra column 
   rename(
@@ -55,5 +56,41 @@ big_5_scoring_guide <- raw %>%
   
   arrange(question_number)
 
-# Save to R/sysdata.rda
-usethis::use_data(big_5_scoring_guide, internal = T, overwrite = T)
+# Get ranges for the randomnumber dataset ======================================
+
+# Download dataset into a temporary file
+url <- "https://openpsychometrics.org/_rawdata/randomnumber.zip"
+td <- tempdir()
+tf <- tempfile(tmpdir = td, fileext = ".zip")
+download.file(url, tf, quiet = T)
+
+# Extract and read file
+fname <- paste("randomnumber", "codebook.txt", sep = "/")
+unzip(tf, files = fname, exdir = td, overwrite = T)
+f <- file.path(td, fname)
+
+rand_num_ranges <- read_tsv(f, col_names = F) %>% 
+  
+  # Limit to random number ranges
+  filter(str_detect(X1, "R")) %>% 
+  
+  # Extract lower and upper ranges
+  extract(col = X2, 
+          into = c("lower", "upper"), 
+          "([0-9]+) and ([0-9]+)") %>% 
+  
+  # Rename fields
+  rename(question_number = X1) %>% 
+  mutate(question_number = str_extract(question_number, "[0-9]+"))
+
+unlink(td)
+unlink(tf)
+
+# Save to R/sysdata.rda ========================================================
+usethis::use_data(
+  big_5_scoring_guide,
+  rand_num_ranges,
+  
+  internal = T,
+  overwrite = T
+)
