@@ -8,8 +8,8 @@ calc_big_five <- function(dataset) {
   
   big_5_scores <- dataset %>%
     
-    # Create a unique ID for each record in the dataset
-    dplyr::mutate(id = dplyr::row_number()) %>% 
+    # Create a locally-scoped variable to uniquely ID each row
+    dplyr::mutate(`_id` = dplyr::row_number()) %>% 
     
     # Pivot into a long format
     tidyr::pivot_longer(cols = tidyselect::matches("\\w\\d+"),
@@ -25,7 +25,7 @@ calc_big_five <- function(dataset) {
        | trait == "A"
        | trait == "N")
       &
-      # Account for datasets with additional, non-Big Five questions
+      # Account for datasets with non-Big Five responses
       (  value == 1
        | value == 2
        | value == 3
@@ -34,7 +34,7 @@ calc_big_five <- function(dataset) {
     ) %>%
     
     # Join in Big 5 scoring guide
-    left_join(
+    dplyr::left_join(
       big_5_scoring_guide
     ) %>%
 
@@ -42,15 +42,18 @@ calc_big_five <- function(dataset) {
     dplyr::mutate(value = value * ifelse(scoring_operation == "+", 1, -1)) %>%
 
     # Calculate scores for each Big 5 trait
-    dplyr::group_by(id, trait) %>%
+    dplyr::group_by(`_id`, trait) %>%
     dplyr::mutate(trait_score = base_score + sum(value)) %>%
     dplyr::ungroup() %>% 
-    dplyr::select(-id, 
-                  -question_number, 
+    dplyr::select(-question_number, 
                   -scoring_operation, 
                   -value, 
                   -base_score) %>% 
-    dplyr::distinct()
+    dplyr::distinct() %>% 
+    tidyr::pivot_wider(names_from = trait, 
+                       values_from = trait_score) %>% 
+    dplyr::select(-`_id`) %>% 
+    dplyr::left_join(dataset)
   
   return(big_5_scores)
 }
