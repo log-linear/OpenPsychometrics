@@ -6,8 +6,9 @@
 library(tidyverse)
 library(here)
 
-# Create Big 5 scoring guide ===================================================
-
+#===============================================================================
+# Create Big 5 scoring guide
+#===============================================================================
 # The initial parsed input data (as piped in by the shell script) is formatted 
 # as follows:
 #
@@ -32,8 +33,8 @@ library(here)
 # where each row represents a single question number, alongside its 
 # corresponding Big Five trait, base score, and scoring operation.
 
-raw <- read_csv(file("stdin") , col_names = F)
-big_5_scoring_guide <- raw %>% 
+b5 <- read_csv(here("data-raw/big_five_personality.csv"), col_names = F)
+big_5_scoring_guide <- b5 %>% 
   select(-X13) %>%  # Unused extra column 
   rename(
     trait = X1,
@@ -61,7 +62,9 @@ big_5_scoring_guide <- raw %>%
   mutate(question_number = row_number()) %>%
   ungroup()
 
-# Get ranges for the randomnumber dataset ======================================
+#===============================================================================
+# Get ranges for the randomnumber dataset
+#===============================================================================
 
 # Download dataset into a temporary file
 url <- "https://openpsychometrics.org/_rawdata/randomnumber.zip"
@@ -91,10 +94,19 @@ rand_num_ranges <- read_tsv(f, col_names = F) %>%
 unlink(td)
 unlink(tf)
 
-# Save to R/sysdata.rda ========================================================
+#===============================================================================
+# Get ranges for the randomnumber dataset
+#===============================================================================
+npi_scoring_guide <- read_csv(here("data-raw/npi_guide.csv"), 
+                col_names = c("question_number", "positive_response")) 
+
+#===============================================================================
+# Save to R/sysdata.rda
+#===============================================================================
 usethis::use_data(
   big_5_scoring_guide,
   rand_num_ranges,
+  npi_scoring_guide,
   
   internal = T,
   overwrite = T
