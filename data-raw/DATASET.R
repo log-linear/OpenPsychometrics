@@ -5,6 +5,7 @@
 #===============================================================================
 library(tidyverse)
 library(here)
+library(usethis)
 
 #===============================================================================
 # Create Big 5 scoring guide
@@ -103,7 +104,7 @@ npi_scoring_guide <- read_csv(here("data-raw/npi_guide.csv"),
 #===============================================================================
 # Save to R/sysdata.rda
 #===============================================================================
-usethis::use_data(
+use_data(
   big_5_scoring_guide,
   rand_num_ranges,
   npi_scoring_guide,
