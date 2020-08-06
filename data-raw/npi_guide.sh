@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Helper script for generating package data. First step is to download and
-# parse out the Big 5 Personality scoring guide into a tabular format. This
-# data is then piped into the data-raw/DATASET.R script
+# parse out the Narcissistic Personality Inventory scoring guide into a 
+# tabular format. This data is then piped into the data-raw/DATASET.R script.
 
 # Download file
 wget \
@@ -18,5 +18,3 @@ pdftotext narcissistic-personality-inventory.pdf - \
   | sed '/^[[:space:]]*$/d' \
   > npi_guide.csv
 
-# Remove downloaded PDF
-rm narcissistic-personality-inventory.pdf

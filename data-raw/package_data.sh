@@ -8,3 +8,5 @@ Rscript DATASET.R
 
 # Remove intermediate files
 rm *.csv
+rm *.pdf
+

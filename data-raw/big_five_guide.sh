@@ -18,5 +18,3 @@ pdftotext big-five-personality-test.pdf - \
   | sed -r "s/([+-]),/\1/g" \
   > big_five_personality.csv
 
-# Remove downloaded PDF
-rm big-five-personality-test.pdf

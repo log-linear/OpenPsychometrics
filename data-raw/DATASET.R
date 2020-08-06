@@ -96,10 +96,11 @@ unlink(td)
 unlink(tf)
 
 #===============================================================================
-# Get ranges for the randomnumber dataset
+# Get NPI scoring guide
 #===============================================================================
 npi_scoring_guide <- read_csv(here("data-raw/npi_guide.csv"), 
-                col_names = c("question_number", "positive_response")) 
+                              col_names = c("question_number", 
+                                            "positive_response")) 
 
 #===============================================================================
 # Save to R/sysdata.rda
